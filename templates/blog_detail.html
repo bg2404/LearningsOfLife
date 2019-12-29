@@ -1,0 +1,77 @@
+<!doctype html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>{{ blog.title }}</title>
+{% endblock %}
+
+{% block content %}
+
+    <!-- Page Content Starts -->
+    <div class="container">
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-8">
+                <div class="card mt-4 p-2">
+                    <!-- Title -->
+                    <h1 class="mt-4">{{ blog.title }}</h1>
+                    <!-- Author -->
+                    <p class="text-muted">by <a href="{% url 'blog:author' %}">{{ blog.author.first_name }} {{ blog.author.last_name }}</a> | {{ blog.updated_at }}</p>
+                    <!-- Preview Image -->
+                    <div class="as-image my-4" style="padding-bottom: 67%; background-image: url('{{ blog.pic.url }}')"></div>
+
+                    <!-- Post Content -->
+
+                    {{ blog.content | safe}}
+                </div>
+
+                <!-- Comments Form -->
+                {% if new_comment %}
+                    <div class="alert alert-success mt-4" role="alert">
+                      Your comment is awaiting moderation
+                    </div>
+                {% elif comment_form %}
+                    <div class="card my-4">
+                        <h5 class="card-header">Leave a Comment:</h5>
+                        <div class="card-body">
+                            <form method="post">
+                                {{ comment_form.as_p }}
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card mb-4  mt-3 ">
+                    <h5 class="card-header">Comments </h5>
+                    <div class="card-body">
+                        <!-- Comments -->
+                        {% if comments %}
+                            {% for comment in comments %}
+                                <div class="comments" style="padding: 10px;">
+                                    <p class="font-weight-bold">
+                                        {{ comment.name }}
+                                        <span class=" text-muted font-weight-normal">
+                                            {{ comment.created_at }}
+                                        </span>
+                                    </p>
+                                    {{ comment.body | linebreaks }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            No Comments
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% block sidebar %}
+                {% include 'sidebar.html' %}
+            {% endblock %}
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- Page Content Ends -->
+
+{% endblock %}
